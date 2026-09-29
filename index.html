@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="title">
+        <h1>Block Game</h1>
+    </header>
+
+    <main class="layout">
+
+        <aside class="panel side">
+            <section class="next-container">
+                <h2>Next</h2>
+                <div id="next-piece"></div>
+            </section>
+
+            <section class="score-box">
+                <h2>Score</h2>
+                <p class="score">
+                    <span id="score">0</span>
+                </p>
+            </section>
+
+            <details id="debug" open>
+                <summary id="debugHeader">Debug Console</summary>
+                <div id="consoleOutput"></div>
+            </details>
+        </aside>
+
+        <div class="board-wrap">
+            <div id="game"></div>
+        </div>
+
+        <aside class="panel controls">
+            <h2>Controls</h2>
+            <button id="Rotate">Rotate</button>
+            <div class="row">
+                <button id="moveLeft">Left</button>
+                <button id="moveRight">Right</button>
+            </div>
+            <button id="moveDown">Down</button>
+        </aside>
+
+    </main>
+
+    <script type="module" src="./game.js"></script>
+</body>
+
+</html>

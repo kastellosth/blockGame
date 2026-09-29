@@ -1,0 +1,229 @@
+:root {
+    --bg: #14122b;
+    --bg-deep: #0d0b1e;
+    --panel: #201d42;
+    --line: #3a3670;
+    --text: #ece9ff;
+    --muted: #9a95cf;
+    --accent: #ff8fab;
+
+    /* Tetromino colors */
+    --I: #4fd8ec;
+    --O: #ffd84a;
+    --T: #b77dff;
+    --S: #5fe08a;
+    --Z: #ff5d6c;
+    --J: #5b8cff;
+    --L: #ff9a4a;
+
+    --cell: 30px;
+    --cols: 10;
+    --rows: 20;
+    --next-size: 4; 
+    --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 24px 16px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    background:
+        radial-gradient(900px 500px at 50% -10%, #2c2766 0%, transparent 70%),
+        var(--bg);
+    color: var(--text);
+    font-family: "Chakra Petch", "Trebuchet MS", sans-serif;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+h2 {
+    margin: 0 0 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+}
+
+.panel {
+    width: 180px;
+    padding: 18px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+.side { display: flex; flex-direction: column; gap: 24px; width: 260px; }
+
+.board-wrap {
+    padding: 8px;
+    background: var(--bg-deep);
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.03), 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+#game {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), var(--cell));
+    grid-template-rows: repeat(var(--rows), var(--cell));
+    width: max-content;
+    height: max-content;
+    margin: 0;
+    border: none;
+}
+
+#game div {
+    width: var(--cell);
+    height: var(--cell);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+#next-piece {
+    display: grid;
+    grid-template-columns: repeat(var(--next-size), var(--cell));
+    grid-template-rows: repeat(var(--next-size), var(--cell));
+    width: max-content;
+    padding: 8px;
+    background: var(--bg-deep);
+    border-radius: 10px;
+}
+
+.next-cell {
+    width: var(--cell);
+    height: var(--cell);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ---------- Filled cells (add these classes from game.js) ----------
+   Generic:   cell.classList.add("filled")  + a color class like "I"
+   Works in both #game and #next-piece. */
+.filled,
+#game div.filled,
+.next-cell.filled {
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: var(--block, #b77dff);
+    box-shadow:
+        inset 4px 4px 0 rgba(255, 255, 255, 0.25),
+        inset -4px -4px 0 rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+}
+
+.I { --block: var(--I); }
+.O { --block: var(--O); }
+.T { --block: var(--T); }
+.S { --block: var(--S); }
+.Z { --block: var(--Z); }
+.J { --block: var(--J); }
+.L { --block: var(--L); }
+
+.score { margin: 0; }
+
+#score {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+}
+
+.controls { display: flex; flex-direction: column; gap: 10px; }
+.controls .row { display: flex; gap: 10px; }
+.controls .row button { flex: 1; }
+
+button {
+    width: 100%;
+    padding: 12px 10px;
+    font: inherit;
+    font-weight: 600;
+    color: var(--text);
+    background: #2d2a5c;
+    border: 1px solid var(--line);
+    border-bottom-width: 4px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.08s, background 0.15s;
+}
+
+button:hover { background: #38347a; }
+
+button:active {
+    transform: translateY(3px);
+    border-bottom-width: 1px;
+}
+
+button:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
+
+#debug {
+    width: 100%;
+    margin: 0;
+    background: var(--bg-deep);
+    color: #7dffb2;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-align: left;
+}
+
+#debugHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #2d2a5c;
+    color: var(--text);
+    font-family: "Chakra Petch", sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+#debugHeader::-webkit-details-marker { display: none; }
+
+#debugHeader::after {
+    content: "Hide";
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--muted);
+}
+
+#debug:not([open]) #debugHeader::after { content: "Show"; }
+
+#debugHeader:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: -3px;
+}
+
+#consoleOutput {
+    height: 200px;
+    padding: 8px 12px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.log { color: #7dffb2; }
+.error { color: #ff6b7a; }
