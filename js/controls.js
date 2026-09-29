@@ -1,5 +1,5 @@
 import {   Direction  } from "./piece.js";
-
+import { ROWS , COLS } from "./board.js";
 export function collision(piece, board, direction) {
     let newRow = piece.row;
     let newCol = piece.col;

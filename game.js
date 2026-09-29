@@ -1,4 +1,4 @@
-import { Piece  } from "./js/piece.js";
+import { Piece ,pieceTypes } from "./js/piece.js";
 import { createBoard, updateBoard, createObstacle ,nextElement } from "./js/board.js";
 import { setupConsole } from "./js/console.js";
 const game = document.querySelector("#game");
@@ -14,19 +14,7 @@ nextElement();
 setupConsole();
 
 console.log("Game started!");
-const piece1 = new Piece(
-
-    [
-        [0,1,0,0],
-        [0,1,0,0],
-        [0,1,0,0],
-        [0,1,0,0],
-      
-
-    ],
-    0,
-    3
-);
+const piece1=new Piece("T", 0, 3);
 leftButton.addEventListener("click", () => {
     piece1.moveLeft(board, game);
 });

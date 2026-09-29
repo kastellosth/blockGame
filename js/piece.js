@@ -1,5 +1,5 @@
 
-import { updateBoard, ROWS, COLS } from "./board.js";
+import { updateBoard } from "./board.js";
 import { isValidMove } from "./controls.js";
 export const Direction = Object.freeze({
     DOWN: "down",
@@ -8,12 +8,62 @@ export const Direction = Object.freeze({
     ROTATE: "rotate",
 });
 
+export const pieceTypes = Object.freeze({
+    I: {
+        shape: [
+            [1, 1, 1, 1]
+        ]
+    },
+
+    O: {
+        shape: [
+            [1, 1],
+            [1, 1]
+        ]
+    },
+
+    T: {
+        shape: [
+            [0, 1, 0],
+            [1, 1, 1]
+        ]
+    },
+
+    S: {
+        shape: [
+            [0, 1, 1],
+            [1, 1, 0]
+        ]
+    },
+
+    Z: {
+        shape: [
+            [1, 1, 0],
+            [0, 1, 1]
+        ]
+    },
+
+    J: {
+        shape: [
+            [1, 0, 0],
+            [1, 1, 1]
+        ]
+    },
+
+    L: {
+        shape: [
+            [0, 0, 1],
+            [1, 1, 1]
+        ]
+    }
+});
+
 export class Piece {
-    constructor(shape, row, col) {
-        this.shape = shape;
+    constructor(type, row, col) {
+        this.type = type;
+        this.shape = pieceTypes[type].shape.map(row => [...row]);
         this.row = row;
         this.col = col;
-        this.type ;
     }
 
     removePiece(board, piece) {
@@ -29,10 +79,10 @@ export class Piece {
     rotate(board, game) {
         const rows = this.shape.length;
         const cols = this.shape[0].length;
-       
-
         const rotated = [];
+
         this.removePiece(board, this);
+
         for (let col = cols - 1; col >= 0; col--) {
             const newRow = [];
 
@@ -44,7 +94,6 @@ export class Piece {
         }
 
         this.shape = rotated
-        
         movePiece(this.row, this.col, this, board, game);
     }
 
@@ -113,8 +162,8 @@ export function movePiece(newRow, newCol, piece, board, game) {
 
     updateBoard(board, game);
 }
- function pieceFactory(params) {
-    
-    
+function pieceFactory(params) {
+
+
 }
 
