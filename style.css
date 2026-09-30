@@ -227,3 +227,4 @@ button:focus-visible {
 
 .log { color: #7dffb2; }
 .error { color: #ff6b7a; }
+.locked { --block: #6b6790; }
