@@ -125,19 +125,11 @@ export class Piece {
 export function movePiece(newRow, newCol, piece, board, game) {
     for (let row = 0; row < piece.shape.length; row++) {
         for (let col = 0; col < piece.shape[row].length; col++) {
-
-
-
             if (piece.shape[row][col] === 1) {
-                if (row == 8 && col == 6) {
-                    console.log(`${piece.shape[row][col]}`)
-                }
                 board[newRow + row][newCol + col] = 1;
             }
         }
     }
-
-
     updateBoard(board, game);
 }
 
