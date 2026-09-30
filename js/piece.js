@@ -1,7 +1,7 @@
 
-import { updateBoard ,boardCheck } from "./board.js";
+import { updateBoard, boardCheck } from "./board.js";
 import { isValidMove } from "./controls.js";
-import {  spawnPiece} from "../game.js";
+
 export const Direction = Object.freeze({
     DOWN: "down",
     LEFT: "left",
@@ -9,6 +9,10 @@ export const Direction = Object.freeze({
     ROTATE: "rotate",
 });
 
+let onLock = () => { };
+export const setOnLock = (fn) => {
+    onLock = fn;
+};
 
 const pieceTypes = {
     I: { shape: [[1, 1, 1, 1]] },
@@ -110,11 +114,11 @@ export class Piece {
                 }
             }
         }
-        
-        updateBoard(board, game);
-        boardCheck(board,game);
 
-        spawnPiece();
+        updateBoard(board, game);
+        const lines = boardCheck(board, game);
+
+        onLock(lines);
     }
 }
 
