@@ -10,14 +10,14 @@ export const setActiveType = (type) => {
 };
 
 
-export const createBoard  = (game)  => {
+export const createBoard = (game) => {
     const board = [];
     for (let row = 0; row < ROWS; row++) {
         board[row] = [];
         for (let col = 0; col < COLS; col++) {
             board[row][col] = 0;
         }
-       
+
     }
 
     for (let row = 0; row < ROWS; row++) {
@@ -27,13 +27,13 @@ export const createBoard  = (game)  => {
             game.appendChild(cell);
         }
     }
- return board;
+    return board;
 };
-export const createObstacle = (board, game ) => {
-   for(let col =0 ; col<COLS; col++){
-        board[8][col]=2;
+export const createObstacle = (board, game) => {
+    for (let col = 0; col < COLS; col++) {
+        board[8][col] = 2;
     }
-    board[8][5]=0;
+    board[8][5] = 0;
     updateBoard(board, game);
 }
 
@@ -43,14 +43,14 @@ export const updateBoard = (board, game) => {
             const cell = game.getElementsByClassName(`${row}-${col}`)[0];
             if (!cell) continue;
 
-            cell.style.backgroundColor = "";               
+            cell.style.backgroundColor = "";
             cell.classList.remove("filled", "locked", ...TYPES);
 
             const value = board[row][col];
             if (value === 1) {
-                cell.classList.add("filled", activeType);  
+                cell.classList.add("filled", activeType);
             } else if (value === 2) {
-                cell.classList.add("filled", "locked");    
+                cell.classList.add("filled", "locked");
             }
         }
     }
@@ -86,4 +86,19 @@ export const nextElementGrid = (next = document.getElementById("next-piece")) =>
             next.appendChild(cell);
         }
     }
+}
+
+
+
+export const boardCheck = (board, game) => {
+    for (let row = 0; row < ROWS; row++) {
+        let total = board[row].reduce((count, cell) => count + cell, 0);
+        if (total === 20) {
+            board[row].fill(0);
+            updateBoard(board, game);
+        }
+        updateBoard(board, game);
+    }
+
+
 }

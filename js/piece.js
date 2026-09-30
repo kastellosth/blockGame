@@ -1,6 +1,7 @@
 
-import { updateBoard } from "./board.js";
+import { updateBoard ,boardCheck } from "./board.js";
 import { isValidMove } from "./controls.js";
+import {  spawnPiece} from "../game.js";
 export const Direction = Object.freeze({
     DOWN: "down",
     LEFT: "left",
@@ -111,6 +112,9 @@ export class Piece {
         }
         
         updateBoard(board, game);
+        boardCheck(board,game);
+
+        spawnPiece();
     }
 }
 

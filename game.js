@@ -1,5 +1,5 @@
-import { pieceFactory ,placePiece } from "./js/piece.js";
-import { createBoard, updateBoard, createObstacle ,nextElementGrid ,updateNextElement ,setActiveType} from "./js/board.js";
+import { pieceFactory, placePiece } from "./js/piece.js";
+import {createObstacle, createBoard, updateBoard, nextElementGrid, updateNextElement, setActiveType } from "./js/board.js";
 import { setupConsole } from "./js/console.js";
 
 const game = document.querySelector("#game");
@@ -7,32 +7,38 @@ const board = createBoard(game);
 const leftButton = document.querySelector("#moveLeft");
 const downButton = document.querySelector("#moveDown");
 const rightButton = document.querySelector("#moveRight");
-const rotate=document.querySelector("#Rotate");
-const next =document.querySelector("#next-piece")
+const rotate = document.querySelector("#Rotate");
+const next = document.querySelector("#next-piece");
+const start = document.querySelector("#Start");
+const pause = document.querySelector("#Pause");
+
 
 setupConsole();
 nextElementGrid();
 
-const createPiece = pieceFactory();   
+const createPiece = pieceFactory();
 const boardCols = board[0].length;
 
 let currentPiece = null;
 let nextPiece = createPiece(boardCols);
 let gameOver = false;
+let intervalId;
+let score ;
 
-function spawnPiece() {
+
+export function spawnPiece() {
     currentPiece = nextPiece;
     nextPiece = createPiece(boardCols);
 
-    
-   /* if (collision(currentPiece, board, null)) {
-        gameOver = true;
-        console.log("Game over!");
-        return;
-    }*/
 
-    setActiveType(currentPiece.type);        
-    updateNextElement(nextPiece, next);      
+    /* if (collision(currentPiece, board, null)) {
+         gameOver = true;
+         console.log("Game over!");
+         return;
+     }*/
+
+    setActiveType(currentPiece.type);
+    updateNextElement(nextPiece, next);
     placePiece(currentPiece, board);
     updateBoard(board, game);
 }
@@ -59,12 +65,24 @@ rotate.addEventListener("click", () => {
 });
 
 
+start.addEventListener("click", () => {
+    intervalId = setInterval(() => {
+    currentPiece.moveDown(board, game);
+    }, 1000);
+});
 
-updateBoard(board, game);
+pause.addEventListener("click",()=>{
+    clearInterval(intervalId);
+});
 
-setTimeout(() => {
-    createObstacle(board, game);
-}, 1000);
+createObstacle(board,game);
+
+
+
+
+
+
+
 
 
 
