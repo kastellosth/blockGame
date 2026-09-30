@@ -1,5 +1,8 @@
 import { Direction } from "./piece.js";
 import { ROWS, COLS } from "./board.js";
+
+const scoreBoard =document .querySelector("score");
+
 export function collision(piece, board, direction) {
     let newRow = piece.row;
     let newCol = piece.col;
@@ -61,3 +64,9 @@ export function isValidMove(piece, direcion, board) {
 
     return true;
 }
+
+const LINE_POINTS = [0, 100, 300, 500, 800];
+ 
+export const scorePoints = (lines, level) => {
+    return (LINE_POINTS[lines] || 0) * level;
+};
