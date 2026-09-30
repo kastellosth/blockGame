@@ -8,55 +8,16 @@ export const Direction = Object.freeze({
     ROTATE: "rotate",
 });
 
-export const pieceTypes = Object.freeze({
-    I: {
-        shape: [
-            [1, 1, 1, 1]
-        ]
-    },
 
-    O: {
-        shape: [
-            [1, 1],
-            [1, 1]
-        ]
-    },
-
-    T: {
-        shape: [
-            [0, 1, 0],
-            [1, 1, 1]
-        ]
-    },
-
-    S: {
-        shape: [
-            [0, 1, 1],
-            [1, 1, 0]
-        ]
-    },
-
-    Z: {
-        shape: [
-            [1, 1, 0],
-            [0, 1, 1]
-        ]
-    },
-
-    J: {
-        shape: [
-            [1, 0, 0],
-            [1, 1, 1]
-        ]
-    },
-
-    L: {
-        shape: [
-            [0, 0, 1],
-            [1, 1, 1]
-        ]
-    }
-});
+const pieceTypes = {
+    I: { shape: [[1, 1, 1, 1]] },
+    O: { shape: [[1, 1], [1, 1]] },
+    T: { shape: [[0, 1, 0], [1, 1, 1]] },
+    S: { shape: [[0, 1, 1], [1, 1, 0]] },
+    Z: { shape: [[1, 1, 0], [0, 1, 1]] },
+    J: { shape: [[1, 0, 0], [1, 1, 1]] },
+    L: { shape: [[0, 0, 1], [1, 1, 1]] }
+};
 
 export class Piece {
     constructor(type, row, col) {
@@ -80,21 +41,28 @@ export class Piece {
         const rows = this.shape.length;
         const cols = this.shape[0].length;
         const rotated = [];
+        const restoreShape = this.shape;
 
         this.removePiece(board, this);
 
         for (let col = cols - 1; col >= 0; col--) {
             const newRow = [];
-
             for (let row = 0; row < rows; row++) {
                 newRow.push(this.shape[row][col]);
             }
 
             rotated.push(newRow);
         }
-
         this.shape = rotated
+        if (!isValidMove(this, Direction.ROTATE, board)) {
+            console.log("Not valid rotaion");
+            this.shape = restoreShape;
+            placePiece(this, board);
+            return false;
+        }
+
         movePiece(this.row, this.col, this, board, game);
+        return true;
     }
 
     moveDown(board, game) {
@@ -105,6 +73,7 @@ export class Piece {
         this.removePiece(board, this);
         this.row++;
         movePiece(this.row, this.col, this, board, game);
+        return true;
     }
 
     moveLeft(board, game) {
@@ -114,6 +83,7 @@ export class Piece {
         this.removePiece(board, this);
         this.col--;
         movePiece(this.row, this.col, this, board, game);
+        return true;
 
     }
 
@@ -124,7 +94,7 @@ export class Piece {
         this.removePiece(board, this);
         this.col++;
         movePiece(this.row, this.col, this, board, game);
-
+        return true;
     }
 
     block(board, game) {
@@ -139,7 +109,7 @@ export class Piece {
                 }
             }
         }
-
+        
         updateBoard(board, game);
     }
 }
@@ -162,8 +132,39 @@ export function movePiece(newRow, newCol, piece, board, game) {
 
     updateBoard(board, game);
 }
-function pieceFactory(params) {
 
 
+
+export function placePiece(piece, board) {
+    for (let row = 0; row < piece.shape.length; row++) {
+        for (let col = 0; col < piece.shape[row].length; col++) {
+            if (piece.shape[row][col] === 1) {
+                board[piece.row + row][piece.col + col] = 1;
+            }
+        }
+    }
 }
 
+export function pieceFactory() {
+    let bag = [];
+
+    function nextType() {
+        if (bag.length === 0) {
+            bag = Object.keys(pieceTypes);
+            // Fisher-Yates shuffle
+            for (let i = bag.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [bag[i], bag[j]] = [bag[j], bag[i]];
+            }
+        }
+        return bag.pop();
+    }
+
+    return function createRandomPiece(boardCols = 10) {
+        const type = nextType();
+        const width = pieceTypes[type].shape[0].length;
+        const startCol = Math.floor((boardCols - width) / 2);
+
+        return new Piece(type, 0, startCol);
+    };
+}
