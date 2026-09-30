@@ -1,48 +1,65 @@
-import { Piece ,pieceTypes } from "./js/piece.js";
-import { createBoard, updateBoard, createObstacle ,nextElement } from "./js/board.js";
+import { pieceFactory ,placePiece } from "./js/piece.js";
+import { createBoard, updateBoard, createObstacle ,nextElementGrid ,updateNextElement ,setActiveType} from "./js/board.js";
 import { setupConsole } from "./js/console.js";
+
 const game = document.querySelector("#game");
 const board = createBoard(game);
 const leftButton = document.querySelector("#moveLeft");
 const downButton = document.querySelector("#moveDown");
 const rightButton = document.querySelector("#moveRight");
 const rotate=document.querySelector("#Rotate");
-
-nextElement();
-
+const next =document.querySelector("#next-piece")
 
 setupConsole();
+nextElementGrid();
+
+const createPiece = pieceFactory();   
+const boardCols = board[0].length;
+
+let currentPiece = null;
+let nextPiece = createPiece(boardCols);
+let gameOver = false;
+
+function spawnPiece() {
+    currentPiece = nextPiece;
+    nextPiece = createPiece(boardCols);
+
+    
+   /* if (collision(currentPiece, board, null)) {
+        gameOver = true;
+        console.log("Game over!");
+        return;
+    }*/
+
+    setActiveType(currentPiece.type);        
+    updateNextElement(nextPiece, next);      
+    placePiece(currentPiece, board);
+    updateBoard(board, game);
+}
 
 console.log("Game started!");
-const piece1=new Piece("T", 0, 3);
+
+spawnPiece();
+
 leftButton.addEventListener("click", () => {
-    piece1.moveLeft(board, game);
+    currentPiece.moveLeft(board, game);
 });
 
 downButton.addEventListener("click", () => {
-    piece1.moveDown(board, game);
+    currentPiece.moveDown(board, game);
 });
 
 rightButton.addEventListener("click", () => {
-    piece1.moveRight(board, game);
+    currentPiece.moveRight(board, game);
 });
 
 
 rotate.addEventListener("click", () => {
-    piece1.rotate(board, game);
+    currentPiece.rotate(board, game);
 });
 
 
-function placePiece(piece1) {
-    for (let row = 0; row < piece1.shape.length; row++) {
-        for (let col = 0; col < piece1.shape[row].length; col++) {
-            if (piece1.shape[row][col] === 1) {
-                board[piece1.row + row][piece1.col + col] = 1;
-            }
-        }
-    }
-}
-placePiece(piece1);
+
 updateBoard(board, game);
 
 setTimeout(() => {
