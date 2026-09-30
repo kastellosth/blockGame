@@ -1,5 +1,5 @@
-import {   Direction  } from "./piece.js";
-import { ROWS , COLS } from "./board.js";
+import { Direction } from "./piece.js";
+import { ROWS, COLS } from "./board.js";
 export function collision(piece, board, direction) {
     let newRow = piece.row;
     let newCol = piece.col;
@@ -19,7 +19,6 @@ export function collision(piece, board, direction) {
     for (let row = 0; row < piece.shape.length; row++) {
         for (let col = 0; col < piece.shape[row].length; col++) {
             if (piece.shape[row][col] === 1 && board[newRow + row][newCol + col] === 2) {
-
                 console.error("collision")
                 return true;
             }
@@ -48,6 +47,14 @@ export function isValidMove(piece, direcion, board) {
                 console.log(`Out of ${direcion} bounds.`)
                 return false;
             }
+            break;
+        case Direction.ROTATE:
+            if (
+                piece.row + piece.shape.length > ROWS ||
+                piece.col + piece.shape[0].length > COLS ||
+                collision(piece, board, Direction.ROTATE)
+            )
+                return false;
             break;
         default: return true;
     }
