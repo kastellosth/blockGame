@@ -91,14 +91,15 @@ export const nextElementGrid = (next = document.getElementById("next-piece")) =>
 
 
 export const boardCheck = (board, game) => {
-    for (let row = 0; row < ROWS; row++) {
-        let total = board[row].reduce((count, cell) => count + cell, 0);
-        if (total === 20) {
-            board[row].fill(0);
-            updateBoard(board, game);
+    let lines = 0;
+    for (let row = ROWS - 1; row >= 0; row--) {
+        if (board[row].every((cell) => cell === 2)) {
+            board.splice(row, 1);               
+            board.unshift(new Array(COLS).fill(0)); // new empty row on top
+            lines++;
+            row++;                              // re-check this index, rows shifted down
         }
-        updateBoard(board, game);
     }
-
-
-}
+    updateBoard(board, game);
+    return lines;
+};
