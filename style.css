@@ -144,6 +144,23 @@ h2 {
     color: var(--accent);
 }
 
+.stats {
+    display: flex;
+    gap: 24px;
+    margin-top: 14px;
+}
+
+.stat h2 { margin-bottom: 4px; }
+
+#level,
+#lines {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+}
+
 .controls { display: flex; flex-direction: column; gap: 10px; }
 .controls .row { display: flex; gap: 10px; }
 .controls .row button { flex: 1; }
