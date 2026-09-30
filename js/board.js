@@ -1,5 +1,13 @@
+
 export const ROWS = 20;
 export const COLS = 10;
+const TYPES = ["I", "O", "T", "S", "Z", "J", "L"];
+
+let activeType = "T"; // fallback 
+
+export const setActiveType = (type) => {
+    activeType = type;
+};
 
 
 export const createBoard  = (game)  => {
@@ -21,7 +29,7 @@ export const createBoard  = (game)  => {
     }
  return board;
 };
-export const createObstacle = (board, game) => {
+export const createObstacle = (board, game ) => {
    for(let col =0 ; col<COLS; col++){
         board[8][col]=2;
     }
@@ -33,19 +41,48 @@ export const updateBoard = (board, game) => {
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
             const cell = game.getElementsByClassName(`${row}-${col}`)[0];
-            if (cell) {
-                cell.style.backgroundColor = board[row][col] === 1 ? "red" : board[row][col] === 2 ? "gray" : "black";
+            if (!cell) continue;
+
+            cell.style.backgroundColor = "";               
+            cell.classList.remove("filled", "locked", ...TYPES);
+
+            const value = board[row][col];
+            if (value === 1) {
+                cell.classList.add("filled", activeType);  
+            } else if (value === 2) {
+                cell.classList.add("filled", "locked");    
             }
         }
     }
 }
 
 
-export const nextElement = (next = document.getElementById("next-piece")) => {
+export function updateNextElement(piece, game) {
+    for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 4; col++) {
+            const cell = game.getElementsByClassName(`next-${row}-${col}`)[0];
+            if (!cell) continue;
+
+            const filled =
+                row < piece.shape.length &&
+                col < piece.shape[row].length &&
+                piece.shape[row][col] === 1;
+
+            cell.style.backgroundColor = "";               // clear any old inline color
+            cell.classList.remove("filled", ...TYPES);     // reset previous piece
+
+            if (filled) {
+                cell.classList.add("filled", piece.type);  // e.g. "filled T"
+            }
+        }
+    }
+}
+
+export const nextElementGrid = (next = document.getElementById("next-piece")) => {
     for (let row = 0; row < 4; row++) {
         for (let col = 0; col < 4; col++) {
             const cell = document.createElement("div");
-            cell.classList.add("next-cell");
+            cell.classList.add(`next-${row}-${col}`);
             next.appendChild(cell);
         }
     }
