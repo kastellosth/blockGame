@@ -1,7 +1,7 @@
 
 import { updateBoard, findFullRows } from "./board.js";
-import { isValidMove } from "./controls.js";
-import { EMPTY, FALLING, LOCKED ,Direction} from "./constants.js";
+import { canPlace, isValidMove } from "./controls.js";
+import { EMPTY, FALLING, LOCKED} from "./constants.js";
 
 let onLock = () => { };
 export const setOnLock = (fn) => {
@@ -18,6 +18,9 @@ const pieceTypes = {
     L: { shape: [[0, 0, 1], [1, 1, 1]] }
 };
 
+const rotateShape = (shape) =>
+    shape[0].map((_, c) => shape.map((row) => row[c])).reverse();
+
 export class Piece {
     constructor(type, row, col) {
         this.type = type;
@@ -26,48 +29,33 @@ export class Piece {
         this.col = col;
     }
 
-    removePiece(board, piece) {
-        for (let row = 0; row < piece.shape.length; row++) {
-            for (let col = 0; col < piece.shape[row].length; col++) {
-                if (piece.shape[row][col] === 1) {
-                    board[piece.row + row][piece.col + col] = EMPTY;
+    removePiece(board, this) {
+        for (let row = 0; row < this.shape.length; row++) {
+            for (let col = 0; col < this.shape[row].length; col++) {
+                if (this.shape[row][col] === 1) {
+                    board[this.row + row][this.col + col] = EMPTY;
                 }
             }
         }
     }
 
-    rotate(board, game , flag) {
-        if(flag===false) return false ;
-        const rows = this.shape.length;
-        const cols = this.shape[0].length;
-        const rotated = [];
-        const restoreShape = this.shape;
-
+    rotate(board, game, isRunning) {
+        if (!isRunning) return false;
+       
+        const rotated = rotateShape(this.shape);
         this.removePiece(board, this);
-
-        for (let col = cols - 1; col >= 0; col--) {
-            const newRow = [];
-            for (let row = 0; row < rows; row++) {
-                newRow.push(this.shape[row][col]);
-            }
-
-            rotated.push(newRow);
-        }
-        this.shape = rotated
-        if (!isValidMove(this, Direction.ROTATE, board)) {
-            console.log("Not valid rotaion");
-            this.shape = restoreShape;
+        if (!canPlace(rotated, this.row, this.col, board)) {
             placePiece(this, board);
             return false;
         }
-
+        this.shape = rotated;
         movePiece(this.row, this.col, this, board, game);
         return true;
     }
 
-    moveDown(board, game ,flag) {
-        if (!flag) return false;
-        if (!isValidMove(this, Direction.DOWN, board)) {
+    moveDown(board, game, isRunning) {
+        if (!isRunning) return false;
+        if (!canPlace(this.shape, this.row + 1, this.col, board)) {
             this.block(board, game);
             return false;
         }
@@ -77,8 +65,8 @@ export class Piece {
         return true;
     }
 
-    moveLeft(board, game,flag) {
-        if (!flag||!isValidMove(this, Direction.LEFT, board,)) {
+    moveLeft(board, game, isRunning) {
+        if (!isRunning || !canPlace(this.shape, this.row, this.col - 1, board)) {
             return false;
         }
         this.removePiece(board, this);
@@ -88,8 +76,8 @@ export class Piece {
 
     }
 
-    moveRight(board, game,flag) {
-        if (!flag || !isValidMove(this, Direction.RIGHT, board)) {
+    moveRight(board, game, isRunning) {
+        if (!isRunning || !canPlace(this.shape, this.row, this.col + 1, board)) {
             return false;
         }
         this.removePiece(board, this);
@@ -162,3 +150,5 @@ export function pieceFactory() {
         return new Piece(type, 0, startCol);
     };
 }
+
+
