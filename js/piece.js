@@ -42,7 +42,8 @@ export class Piece {
         }
     }
 
-    rotate(board, game) {
+    rotate(board, game , flag) {
+        if(flag===false) return false ;
         const rows = this.shape.length;
         const cols = this.shape[0].length;
         const rotated = [];
@@ -70,7 +71,8 @@ export class Piece {
         return true;
     }
 
-    moveDown(board, game) {
+    moveDown(board, game ,flag) {
+        if (!flag) return false;
         if (!isValidMove(this, Direction.DOWN, board)) {
             this.block(board, game);
             return false;
@@ -81,8 +83,8 @@ export class Piece {
         return true;
     }
 
-    moveLeft(board, game) {
-        if (!isValidMove(this, Direction.LEFT, board,)) {
+    moveLeft(board, game,flag) {
+        if (!flag||!isValidMove(this, Direction.LEFT, board,)) {
             return false;
         }
         this.removePiece(board, this);
@@ -92,8 +94,8 @@ export class Piece {
 
     }
 
-    moveRight(board, game) {
-        if (!isValidMove(this, Direction.RIGHT, board)) {
+    moveRight(board, game,flag) {
+        if (!flag || !isValidMove(this, Direction.RIGHT, board)) {
             return false;
         }
         this.removePiece(board, this);
