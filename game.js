@@ -1,5 +1,5 @@
 import { pieceFactory, placePiece, setOnLock } from "./js/piece.js";
-import { createBoard, updateBoard, nextElementGrid, updateNextElement, setActiveType, flashRows, removeRows, FLASH_MS } from "./js/board.js";
+import { createBoard, updateBoard, nextElementGrid, updateNextElement, setActivePiece, flashRows, removeRows, FLASH_MS } from "./js/board.js";
 import { collision, scorePoints } from "./js/controls.js";
 import { setupConsole } from "./js/console.js";
 
@@ -24,6 +24,7 @@ const playAgain = document.querySelector("#playAgain");
 setupConsole();
 nextElementGrid();
 
+// One source of truth for the flash length: JS constant -> CSS variable
 document.documentElement.style.setProperty("--flash-ms", `${FLASH_MS}ms`);
 
 const createPiece = pieceFactory();
@@ -32,7 +33,7 @@ const boardCols = board[0].length;
 let currentPiece = null;
 let nextPiece = createPiece(boardCols);
 let gameOver = false;
-let clearing = false; 
+let clearing = false; // true while the line-clear flash is playing
 let intervalId = null;
 let score = 0;
 let lines = 0;
@@ -80,7 +81,7 @@ function spawnPiece() {
         return;
     }
 
-    setActiveType(currentPiece.type);
+    setActivePiece(currentPiece);
     updateNextElement(nextPiece, next);
     placePiece(currentPiece, board);
     updateBoard(board, game);
@@ -114,6 +115,7 @@ function startGame() {
     startLoop();
 }
 
+// Called by piece.js when a piece locks. It receives the indexes of full rows.
 setOnLock((fullRows) => {
     if (fullRows.length === 0) {
         spawnPiece();
@@ -163,6 +165,7 @@ start.addEventListener("click", startGame);
 playAgain.addEventListener("click", startGame);
 pause.addEventListener("click", stopLoop);
 
+// don't leave buttons focused, so Space/Enter don't re-click them
 document.querySelectorAll("button").forEach((btn) => {
     btn.addEventListener("click", () => btn.blur());
 });

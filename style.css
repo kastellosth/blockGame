@@ -303,6 +303,16 @@ button:focus-visible {
     color: var(--muted);
 }
 
+
+/* ---------- Ghost piece ---------- */
+#game div.ghost {
+    background: color-mix(in srgb, var(--block, #b77dff) 14%, transparent);
+    border: 2px dashed var(--block, #b77dff);
+    border-radius: 4px;
+    box-shadow: none;
+    opacity: 0.55;
+}
+
 @keyframes modal-in {
     from { opacity: 0; transform: scale(0.95); }
     to   { opacity: 1; transform: scale(1); }
