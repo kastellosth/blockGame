@@ -1,6 +1,6 @@
 
 import { updateBoard, findFullRows } from "./board.js";
-import { canPlace, isValidMove } from "./controls.js";
+import { canPlace } from "./controls.js";
 import { EMPTY, FALLING, LOCKED} from "./constants.js";
 
 let onLock = () => { };
@@ -29,11 +29,11 @@ export class Piece {
         this.col = col;
     }
 
-    removePiece(board, this) {
-        for (let row = 0; row < this.shape.length; row++) {
-            for (let col = 0; col < this.shape[row].length; col++) {
-                if (this.shape[row][col] === 1) {
-                    board[this.row + row][this.col + col] = EMPTY;
+    removePiece(board, piece) {
+        for (let row = 0; row < piece.shape.length; row++) {
+            for (let col = 0; col < piece.shape[row].length; col++) {
+                if (piece.shape[row][col] === 1) {
+                    board[piece.row + row][piece.col + col] = EMPTY;
                 }
             }
         }

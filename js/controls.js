@@ -1,68 +1,8 @@
-import { ROWS, COLS ,Direction ,FALLING ,LOCKED} from "./constants.js";
+import { ROWS, COLS  ,LOCKED} from "./constants.js";
 
 const LINE_POINTS = [0, 100, 300, 500, 800];
 
-export function collision(piece, board, direction) {
-    let newRow = piece.row;
-    let newCol = piece.col;
-    switch (direction) {
-        case Direction.DOWN:
-            newRow++;
-            break;
-        case Direction.LEFT:
-            newCol--;
-            break;
-        case Direction.RIGHT:
-            newCol++;
-            break;
-        default:
-            break;
-    }
-    for (let row = 0; row < piece.shape.length; row++) {
-        for (let col = 0; col < piece.shape[row].length; col++) {
-            if (piece.shape[row][col]=== FALLING && board[newRow + row][newCol + col] === LOCKED) {
-                console.error("collision")
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
-
-export function isValidMove(piece, direcion, board) {
-    switch (direcion) {
-        case Direction.RIGHT:
-            if (piece.col + piece.shape[0].length >= COLS || collision(piece, board, Direction.RIGHT)) {
-                console.log(`Out of ${direcion} bounds.`)
-                return false;
-            }
-            break;
-        case Direction.LEFT:
-            if (piece.col - 1 < 0 || collision(piece, board, Direction.LEFT)) {
-                console.log(`Out of ${direcion} bounds.`)
-                return false;
-            }
-            break;
-        case Direction.DOWN:
-            if (piece.row + piece.shape.length >= ROWS || collision(piece, board, Direction.DOWN)) {
-                console.log(`Out of ${direcion} bounds.`)
-                return false;
-            }
-            break;
-        case Direction.ROTATE:
-            if (
-                piece.row + piece.shape.length > ROWS ||
-                piece.col + piece.shape[0].length > COLS ||
-                collision(piece, board, Direction.ROTATE)
-            )
-                return false;
-            break;
-        default: return true;
-    }
-
-    return true;
-}
 
 export const scorePoints = (lines, level) => {
     return (LINE_POINTS[lines] || 0) * level;

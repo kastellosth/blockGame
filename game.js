@@ -1,6 +1,6 @@
 import { pieceFactory, placePiece, setOnLock } from "./js/piece.js";
 import { createBoard, updateBoard, nextElementGrid, updateNextElement, setActivePiece, flashRows, removeRows, FLASH_MS } from "./js/board.js";
-import { collision, scorePoints } from "./js/controls.js";
+import { canPlace, scorePoints } from "./js/controls.js";
 import { setupConsole } from "./js/console.js";
 
 const game = document.querySelector("#game");
@@ -72,7 +72,7 @@ function spawnPiece() {
     currentPiece = nextPiece;
     nextPiece = createPiece(boardCols);
 
-    if (collision(currentPiece, board, null)) {
+    if (!canPlace(currentPiece.shape, currentPiece.row, currentPiece.col, board)) {
         gameOver = true;
         stopLoop();
         console.log("Game over!");
