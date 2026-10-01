@@ -32,7 +32,7 @@ const boardCols = board[0].length;
 let currentPiece = null;
 let nextPiece = createPiece(boardCols);
 let gameOver = false;
-let clearing = false; // true while the line-clear flash is playing
+let clearing = false; 
 let intervalId = null;
 let score = 0;
 let lines = 0;
@@ -163,7 +163,6 @@ start.addEventListener("click", startGame);
 playAgain.addEventListener("click", startGame);
 pause.addEventListener("click", stopLoop);
 
-// don't leave buttons focused, so Space/Enter don't re-click them
 document.querySelectorAll("button").forEach((btn) => {
     btn.addEventListener("click", () => btn.blur());
 });

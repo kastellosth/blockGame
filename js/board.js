@@ -1,6 +1,6 @@
 export const ROWS = 20;
 export const COLS = 10;
-export const FLASH_MS = 350; // keep CSS in sync: set from game.js
+export const FLASH_MS = 350; 
 const TYPES = ["I", "O", "T", "S", "Z", "J", "L"];
 
 let activeType = "T"; // fallback 
@@ -29,13 +29,7 @@ export const createBoard = (game) => {
     }
     return board;
 };
-export const createObstacle = (board, game) => {
-    for (let col = 0; col < COLS; col++) {
-        board[8][col] = 2;
-    }
-    board[8][5] = 0;
-    updateBoard(board, game);
-}
+
 
 export const updateBoard = (board, game) => {
     for (let row = 0; row < ROWS; row++) {
@@ -68,11 +62,11 @@ export function updateNextElement(piece, game) {
                 col < piece.shape[row].length &&
                 piece.shape[row][col] === 1;
 
-            cell.style.backgroundColor = "";               // clear any old inline color
-            cell.classList.remove("filled", ...TYPES);     // reset previous piece
+            cell.style.backgroundColor = "";               
+            cell.classList.remove("filled", ...TYPES);     
 
             if (filled) {
-                cell.classList.add("filled", piece.type);  // e.g. "filled T"
+                cell.classList.add("filled", piece.type);  
             }
         }
     }
@@ -90,10 +84,10 @@ export const nextElementGrid = (next = document.getElementById("next-piece")) =>
 
 
 
+
 export const findFullRows = (board) =>
     board.reduce((rows, line, i) => (line.every((cell) => cell === 2) ? [...rows, i] : rows), []);
 
-// Adds the "clearing" class so the CSS animation plays on those rows
 export const flashRows = (rows, game) => {
     for (const row of rows) {
         for (let col = 0; col < COLS; col++) {
@@ -104,9 +98,8 @@ export const flashRows = (rows, game) => {
 };
 
 export const removeRows = (board, rows, game) => {
-    [...rows].sort((a, b) => b - a).forEach((row) => {
-        board.splice(row, 1);
-        board.unshift(new Array(COLS).fill(0));
-    });
+    const kept = board.filter((_, index) => !rows.includes(index));
+    const empty = Array.from({ length: rows.length }, () => new Array(COLS).fill(0));
+    board.splice(0, board.length, ...empty, ...kept);
     updateBoard(board, game);
 };
