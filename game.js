@@ -1,5 +1,5 @@
 import { pieceFactory, placePiece, setOnLock } from "./js/piece.js";
-import { createBoard, updateBoard, nextElementGrid, updateNextElement, setActiveType } from "./js/board.js";
+import { createBoard, updateBoard, nextElementGrid, updateNextElement, setActiveType, flashRows, removeRows, FLASH_MS } from "./js/board.js";
 import { collision, scorePoints } from "./js/controls.js";
 import { setupConsole } from "./js/console.js";
 
@@ -15,10 +15,16 @@ const pause = document.querySelector("#Pause");
 const scoreBoard = document.querySelector("#score");
 const levelBoard = document.querySelector("#level");
 const linesBoard = document.querySelector("#lines");
-
+const modal = document.querySelector("#gameOverModal");
+const finalScore = document.querySelector("#finalScore");
+const finalLevel = document.querySelector("#finalLevel");
+const finalLines = document.querySelector("#finalLines");
+const playAgain = document.querySelector("#playAgain");
 
 setupConsole();
 nextElementGrid();
+
+document.documentElement.style.setProperty("--flash-ms", `${FLASH_MS}ms`);
 
 const createPiece = pieceFactory();
 const boardCols = board[0].length;
@@ -26,6 +32,7 @@ const boardCols = board[0].length;
 let currentPiece = null;
 let nextPiece = createPiece(boardCols);
 let gameOver = false;
+let clearing = false; // true while the line-clear flash is playing
 let intervalId = null;
 let score = 0;
 let lines = 0;
@@ -40,17 +47,24 @@ function updateScoreboard() {
     if (linesBoard) linesBoard.textContent = lines;
 }
 
+function showGameOver() {
+    finalScore.textContent = score;
+    finalLevel.textContent = level;
+    finalLines.textContent = lines;
+    modal.hidden = false;
+}
+
 function stopLoop() {
     clearInterval(intervalId);
     intervalId = null;
-    isRunning=false ;
+    isRunning = false;
 }
 
 function startLoop() {
     stopLoop();
-    isRunning=true;
+    isRunning = true;
     intervalId = setInterval(() => {
-        if (!gameOver) currentPiece.moveDown(board, game,isRunning);
+        if (!gameOver && !clearing) currentPiece.moveDown(board, game, isRunning);
     }, dropDelay());
 }
 
@@ -62,6 +76,7 @@ function spawnPiece() {
         gameOver = true;
         stopLoop();
         console.log("Game over!");
+        showGameOver();
         return;
     }
 
@@ -77,20 +92,41 @@ function resetGame() {
     lines = 0;
     level = 1;
     gameOver = false;
+    clearing = false;
+    modal.hidden = true;
     updateScoreboard();
+    updateBoard(board, game);
     nextPiece = createPiece(boardCols);
     spawnPiece();
 }
 
 function softDrop() {
+    if (gameOver || clearing) return;
     if (currentPiece.moveDown(board, game, isRunning)) {
         score += 1;
         updateScoreboard();
     }
 }
 
-setOnLock((cleared) => {
-    if (cleared > 0) {
+function startGame() {
+    if (clearing) return;
+    if (gameOver) resetGame();
+    startLoop();
+}
+
+setOnLock((fullRows) => {
+    if (fullRows.length === 0) {
+        spawnPiece();
+        return;
+    }
+
+    clearing = true;
+    flashRows(fullRows, game);
+
+    setTimeout(() => {
+        removeRows(board, fullRows, game);
+
+        const cleared = fullRows.length;
         score += scorePoints(cleared, level);
         lines += cleared;
 
@@ -99,67 +135,64 @@ setOnLock((cleared) => {
             level = newLevel;
             if (intervalId !== null) startLoop();
         }
+
+        clearing = false;
         updateScoreboard();
-    }
-    spawnPiece();
+        spawnPiece();
+    }, FLASH_MS);
 });
 
 updateScoreboard();
 spawnPiece();
 
 leftButton.addEventListener("click", () => {
-    if (!gameOver) currentPiece.moveLeft(board, game,isRunning);
+    if (!gameOver && !clearing) currentPiece.moveLeft(board, game, isRunning);
 });
 
-downButton.addEventListener("click", () => {
-    if (!gameOver) softDrop();
-});
+downButton.addEventListener("click", softDrop);
 
 rightButton.addEventListener("click", () => {
-    if (!gameOver) currentPiece.moveRight(board, game,isRunning);
+    if (!gameOver && !clearing) currentPiece.moveRight(board, game, isRunning);
 });
 
 rotate.addEventListener("click", () => {
-    if (!gameOver) currentPiece.rotate(board, game,isRunning);
+    if (!gameOver && !clearing) currentPiece.rotate(board, game, isRunning);
 });
 
-function startGame() {
-    if (gameOver) resetGame();
-    startLoop();
-}
-
 start.addEventListener("click", startGame);
+playAgain.addEventListener("click", startGame);
+pause.addEventListener("click", stopLoop);
 
 // don't leave buttons focused, so Space/Enter don't re-click them
 document.querySelectorAll("button").forEach((btn) => {
     btn.addEventListener("click", () => btn.blur());
 });
 
-pause.addEventListener("click", stopLoop);
-
 document.addEventListener("keydown", gameControls);
 
 function gameControls(event) {
+    if (clearing) return;
+
     switch (event.code) {
         case "KeyW":
-            currentPiece.rotate(board, game,isRunning);
+            currentPiece.rotate(board, game, isRunning);
             break;
         case "KeyA":
-            currentPiece.moveLeft(board, game,isRunning);
+            currentPiece.moveLeft(board, game, isRunning);
             break;
         case "KeyS":
             softDrop();
             break;
         case "KeyD":
-            currentPiece.moveRight(board, game,isRunning);
+            currentPiece.moveRight(board, game, isRunning);
             break;
         case "ArrowLeft":
             event.preventDefault();
-            currentPiece.moveLeft(board, game,isRunning);
+            currentPiece.moveLeft(board, game, isRunning);
             break;
         case "ArrowRight":
             event.preventDefault();
-            currentPiece.moveRight(board, game,isRunning);
+            currentPiece.moveRight(board, game, isRunning);
             break;
         case "ArrowDown":
             event.preventDefault();
@@ -167,7 +200,7 @@ function gameControls(event) {
             break;
         case "ArrowUp":
             event.preventDefault();
-            currentPiece.rotate(board, game,isRunning);
+            currentPiece.rotate(board, game, isRunning);
             break;
         case "Space":
             event.preventDefault();

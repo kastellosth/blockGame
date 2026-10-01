@@ -54,6 +54,15 @@
 
         <div class="board-wrap">
             <div id="game"></div>
+
+            <div id="gameOverModal" class="modal" hidden>
+                <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+                    <h2 id="gameOverTitle">Game Over</h2>
+                    <p class="final-score"><span id="finalScore">0</span></p>
+                    <p class="final-stats">Level <span id="finalLevel">1</span> &middot; Lines <span id="finalLines">0</span></p>
+                    <button id="playAgain">Play again</button>
+                </div>
+            </div>
         </div>
 
         <aside class="panel controls">

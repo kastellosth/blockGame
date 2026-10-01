@@ -1,6 +1,6 @@
-
 export const ROWS = 20;
 export const COLS = 10;
+export const FLASH_MS = 350; // keep CSS in sync: set from game.js
 const TYPES = ["I", "O", "T", "S", "Z", "J", "L"];
 
 let activeType = "T"; // fallback 
@@ -44,7 +44,7 @@ export const updateBoard = (board, game) => {
             if (!cell) continue;
 
             cell.style.backgroundColor = "";
-            cell.classList.remove("filled", "locked", ...TYPES);
+            cell.classList.remove("filled", "locked", "clearing", ...TYPES);
 
             const value = board[row][col];
             if (value === 1) {
@@ -90,16 +90,23 @@ export const nextElementGrid = (next = document.getElementById("next-piece")) =>
 
 
 
-export const boardCheck = (board, game) => {
-    let lines = 0;
-    for (let row = ROWS - 1; row >= 0; row--) {
-        if (board[row].every((cell) => cell === 2)) {
-            board.splice(row, 1);               
-            board.unshift(new Array(COLS).fill(0)); // new empty row on top
-            lines++;
-            row++;                              // re-check this index, rows shifted down
+export const findFullRows = (board) =>
+    board.reduce((rows, line, i) => (line.every((cell) => cell === 2) ? [...rows, i] : rows), []);
+
+// Adds the "clearing" class so the CSS animation plays on those rows
+export const flashRows = (rows, game) => {
+    for (const row of rows) {
+        for (let col = 0; col < COLS; col++) {
+            const cell = game.getElementsByClassName(`${row}-${col}`)[0];
+            if (cell) cell.classList.add("clearing");
         }
     }
+};
+
+export const removeRows = (board, rows, game) => {
+    [...rows].sort((a, b) => b - a).forEach((row) => {
+        board.splice(row, 1);
+        board.unshift(new Array(COLS).fill(0));
+    });
     updateBoard(board, game);
-    return lines;
 };

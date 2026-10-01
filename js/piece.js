@@ -1,5 +1,5 @@
 
-import { updateBoard, boardCheck } from "./board.js";
+import { updateBoard, findFullRows } from "./board.js";
 import { isValidMove } from "./controls.js";
 
 export const Direction = Object.freeze({
@@ -118,9 +118,7 @@ export class Piece {
         }
 
         updateBoard(board, game);
-        const lines = boardCheck(board, game);
-
-        onLock(lines);
+        onLock(findFullRows(board));
     }
 }
 
