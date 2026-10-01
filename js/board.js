@@ -1,7 +1,5 @@
-export const ROWS = 20;
-export const COLS = 10;
 export const FLASH_MS = 350; 
-
+import { ROWS, COLS , EMPTY,FALLING ,LOCKED} from "./constants.js";
 const TYPES = ["I", "O", "T", "S", "Z", "J", "L"];
 
 let activePiece = null;
@@ -29,7 +27,7 @@ export const createBoard = (game) => {
     for (let row = 0; row < ROWS; row++) {
         board[row] = [];
         for (let col = 0; col < COLS; col++) {
-            board[row][col] = 0;
+            board[row][col] = EMPTY;
         }
 
     }
@@ -65,12 +63,12 @@ export const updateBoard = (board, game) => {
             cell.classList.remove("filled", "locked", "clearing", "ghost", ...TYPES);
  
             const value = board[row][col];
-            if (value === 1) {
+            if (value === FALLING) {
                 cell.classList.add("filled", activeType);
-            } else if (value === 2) {
+            } else if (value === LOCKED) {
                 cell.classList.add("filled", "locked");
             } else if (ghost.has(`${row}-${col}`)) {
-                cell.classList.add("ghost", activeType); // only on empty cells
+                cell.classList.add("ghost", activeType); 
             }
         }
     }
@@ -108,7 +106,7 @@ export const nextElementGrid = (next = document.getElementById("next-piece")) =>
 }
 
 export const findFullRows = (board) =>
-    board.reduce((rows, line, i) => (line.every((cell) => cell === 2) ? [...rows, i] : rows), []);
+    board.reduce((rows, line, i) => (line.every((cell) => cell === LOCKED) ? [...rows, i] : rows), []);
 
 export const flashRows = (rows, game) => {
     for (const row of rows) {

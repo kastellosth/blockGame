@@ -1,13 +1,7 @@
 
 import { updateBoard, findFullRows } from "./board.js";
 import { isValidMove } from "./controls.js";
-
-export const Direction = Object.freeze({
-    DOWN: "down",
-    LEFT: "left",
-    RIGHT: "right",
-    ROTATE: "rotate",
-});
+import { EMPTY, FALLING, LOCKED ,Direction} from "./constants.js";
 
 let onLock = () => { };
 export const setOnLock = (fn) => {
@@ -36,7 +30,7 @@ export class Piece {
         for (let row = 0; row < piece.shape.length; row++) {
             for (let col = 0; col < piece.shape[row].length; col++) {
                 if (piece.shape[row][col] === 1) {
-                    board[piece.row + row][piece.col + col] = 0;
+                    board[piece.row + row][piece.col + col] = EMPTY;
                 }
             }
         }
@@ -111,8 +105,8 @@ export class Piece {
                 const boardRow = this.row + r;
                 const boardCol = this.col + c;
 
-                if (board[boardRow][boardCol] === 1) {
-                    board[boardRow][boardCol] = 2;
+                if (board[boardRow][boardCol] === FALLING) {
+                    board[boardRow][boardCol] = LOCKED;
                 }
             }
         }
@@ -126,7 +120,7 @@ export function movePiece(newRow, newCol, piece, board, game) {
     for (let row = 0; row < piece.shape.length; row++) {
         for (let col = 0; col < piece.shape[row].length; col++) {
             if (piece.shape[row][col] === 1) {
-                board[newRow + row][newCol + col] = 1;
+                board[newRow + row][newCol + col] = FALLING;
             }
         }
     }
@@ -139,7 +133,7 @@ export function placePiece(piece, board) {
     for (let row = 0; row < piece.shape.length; row++) {
         for (let col = 0; col < piece.shape[row].length; col++) {
             if (piece.shape[row][col] === 1) {
-                board[piece.row + row][piece.col + col] = 1;
+                board[piece.row + row][piece.col + col] = FALLING;
             }
         }
     }

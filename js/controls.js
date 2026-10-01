@@ -1,7 +1,6 @@
-import { Direction } from "./piece.js";
-import { ROWS, COLS } from "./board.js";
+import { ROWS, COLS ,Direction ,FALLING ,LOCKED} from "./constants.js";
 
-const scoreBoard =document .querySelector("score");
+const LINE_POINTS = [0, 100, 300, 500, 800];
 
 export function collision(piece, board, direction) {
     let newRow = piece.row;
@@ -21,7 +20,7 @@ export function collision(piece, board, direction) {
     }
     for (let row = 0; row < piece.shape.length; row++) {
         for (let col = 0; col < piece.shape[row].length; col++) {
-            if (piece.shape[row][col] === 1 && board[newRow + row][newCol + col] === 2) {
+            if (piece.shape[row][col]=== FALLING && board[newRow + row][newCol + col] === LOCKED) {
                 console.error("collision")
                 return true;
             }
@@ -65,7 +64,7 @@ export function isValidMove(piece, direcion, board) {
     return true;
 }
 
-const LINE_POINTS = [0, 100, 300, 500, 800];
+
  
 export const scorePoints = (lines, level) => {
     return (LINE_POINTS[lines] || 0) * level;
